@@ -5,6 +5,10 @@ printf "Content-type: application/json\n\n"
 : ${problem_status="OPEN"}
 : ${time="6hours"}
 
+if [[ -r /usr/share/grafana/dynatrace/credentials ]];then
+  source /usr/share/grafana/dynatrace/credentials 
+fi
+
 curl -s -k -X GET \
   -H "Accept: application/json" \
   -H "Authorization: Api-Token ${DYNATRACE_API_TOKEN}" \
