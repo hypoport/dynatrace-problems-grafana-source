@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+printf "Content-type: application/json\n\n"
+
+: ${problem_status="OPEN"}
+: ${time="6hours"}
+
+curl -s -k -X GET \
+  -H "Accept: application/json" \
+  -H "Authorization: Api-Token ${DYNATRACE_API_TOKEN}" \
+  "https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/api/v1/problem/feed?status=${problem_status}&relativeTime=${time}" \
+  | jq -M -r \
+	--argjson levelmap "$(jq -n '{ERROR:16,PERFORMANCE:0}')" \
+".result.problems|\
+map(\
+  .startTime as \$startTime |\
+  .id as \$id |\
+	.rankedImpacts[0]|\
+	[\
+		\$startTime,
+    \"<a href='https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/#problems/problemdetails;pid=\\(\$id)'>dyntrace</a>\",\
+		.entityName,\
+		.severityLevel,\
+		(\$levelmap[.severityLevel]//0)\
+	]\
+	)" \
+	| jq -M -c \
+"[{\
+	columns:[\
+		{text:\"Time\",type:\"time\",sort:true,desc:true},\
+		{text:\"host_name\",type:\"text\"},\
+		{text:\"service\",type:\"text\"},\
+		{text:\"status\",type:\"text\"},\
+		{text:\"status_code\",type:\"number\"}\
+	],\
+  type:\"table\",\
+  rows:.\
+}]"
+
