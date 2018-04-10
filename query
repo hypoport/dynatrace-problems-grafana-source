@@ -14,15 +14,16 @@ curl -s -k -X GET \
   -H "Authorization: Api-Token ${DYNATRACE_API_TOKEN}" \
   "https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/api/v1/problem/feed?status=${problem_status}&relativeTime=${time}" \
   | jq -M -r \
-	--argjson levelmap "$(jq -n '{ERROR:16,PERFORMANCE:0}')" \
+	--argjson levelmap "$(jq -n '{ERROR:16,PERFORMANCE:0,RESOURCE_CONTENTION:0}')" \
 ".result.problems|\
 map(\
   .startTime as \$startTime |\
   .id as \$id |\
+  .displayName as \$displayName |\
 	.rankedImpacts[0]|\
 	[\
 		\$startTime,
-    \"<a href='https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/#problems/problemdetails;pid=\\(\$id)'>dyntrace</a>\",\
+    \"<a href='https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/#problems/problemdetails;pid=\\(\$id)' target='_blank'>dyntrace \\(\$displayName)</a>\",\
 		.entityName,\
 		.severityLevel,\
 		(\$levelmap[.severityLevel]//0)\
