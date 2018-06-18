@@ -23,7 +23,7 @@ map(\
 	.rankedImpacts[0]|\
 	[\
 		\$startTime,
-    \"<a href='https://rzsolv275.rz-hypoport.local/e/${DYNATRACE_ENVIRONMENT_ID}/#problems/problemdetails;pid=\\(\$id)' target='_blank'>dyntrace \\(\$displayName)</a>\",\
+    \"<a href='https://mro438.dynatrace-managed.com/e/${DYNATRACE_ENVIRONMENT_ID}/#problems/problemdetails;pid=\\(\$id)' target='_blank'>dyntrace \\(\$displayName)</a>\",\
 		.entityName,\
 		.severityLevel,\
 		(\$levelmap[.severityLevel]//0)\
